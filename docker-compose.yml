@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  server:
+    build: ./src
+    container_name: redes_server
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./src:/app
+      - ./captures:/app/captures
+    cap_add:
+      - NET_ADMIN
+    networks:
+      - rede_avaliacao
+
+  client:
+    build: ./src
+    container_name: redes_client
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./src:/app
+      - ./captures:/app/captures
+    cap_add:
+      - NET_ADMIN
+    depends_on:
+      - server
+    networks:
+      - rede_avaliacao
+
+networks:
+  rede_avaliacao:
+    driver: bridge
