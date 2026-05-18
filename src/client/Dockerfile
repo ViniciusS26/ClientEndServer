@@ -20,4 +20,4 @@ RUN pip3 install pandas matplotlib
 WORKDIR /app
 
 # O comando padrão mantém o container vivo para executarmos os testes
-CMD ["bash"]
+CMD  ["python3", "client/client_TCP.py"]
