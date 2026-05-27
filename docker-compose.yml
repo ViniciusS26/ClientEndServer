@@ -4,10 +4,13 @@ services:
   servertcp:
     build: 
       context: ./src
-      dockerfile: projeto_TCP/Dockerfile
+      dockerfile: conexao_TCP/Dockerfile
     container_name: server_tcp
     volumes:
       - ./src:/app
+    environment:
+      - PYTHONPATH=/app
+    command: python3 /app/conexao_TCP/new_server.py
     networks:
       redes:
         ipv4_address: 95.58.0.3
@@ -18,13 +21,16 @@ services:
   client:
     build:
       context: ./src
-      dockerfile: client/Dockerfile
+      dockerfile: conexao_TCP/Dockerfile
     container_name: client
     depends_on:
       - servertcp
     volumes:
       - ./capturas:/capturas
       - ./src:/app
+    environment:
+      - PYTHONPATH=/app
+    command: python3 /app/conexao_TCP/new_client.py
     networks:
       redes:
         ipv4_address: 95.58.0.4
