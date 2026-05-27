@@ -21,7 +21,6 @@ class CustomAuth:
     def get_auth_hash(self):
         """Gera o Hash SHA-256 para o campo X-Custom-Auth"""
         payload = self.matricula + self.nome
-        print(f"[*] Gerando hash para payload: {payload}")
         return hashlib.sha256(payload.encode()).digest()
 
 
@@ -45,7 +44,6 @@ class ClientTCP:
 
             # Monta a requisição formatada com a quebra de linha \n separando o hash do nome do arquivo
             requisicao = (f"X-Custom-Auth: {X_CUSTOM_AUTH.hex()}\n{nome_arquivo}")
-            print(f"[*] Solicitando arquivo '{nome_arquivo}' ao servidor...")
             client.send(requisicao.encode())
 
             # Recebe o cabeçalho de resposta (Ex: b"OK|1024\n" ou mensagem de erro)
@@ -55,8 +53,6 @@ class ClientTCP:
                 # Extrai o tamanho do arquivo enviado pelo servidor
                 dados_header = resposta_inicial.decode().strip().split("|")
                 tamanho_arquivo = int(dados_header[1])
-                print(f"[+] Arquivo encontrado! Tamanho: {tamanho_arquivo} bytes. Iniciando download...")
-
                 caminho_salvar = os.path.join(PASTA_DOWNLOADS, nome_arquivo)
                 bytes_recebidos = 0
 
@@ -69,12 +65,8 @@ class ClientTCP:
                             break  # Conexão fechada inesperadamente
                         f.write(chunk)
                         bytes_recebidos += len(chunk)
-
-                print(f"[+] Download concluído com sucesso! Salvo em: {caminho_salvar}")
-
             else:
-                print(f"[-] Erro retornado pelo servidor: {resposta_inicial.decode().strip()}")
-
+                print(f"[-] Erro do servidor: {resposta_inicial.decode().strip()}")
         except Exception as e:
             print(f"[-] Falha na comunicação: {e}")
         finally:
@@ -83,19 +75,10 @@ class ClientTCP:
 
 if __name__ == "__main__":
     cliente = ClientTCP(target_host, target_port)
-
-
     arquivo_desejado = "arquivo.txt"
-
-    start_time = time()
-    soma_tempo = 0.0
-    i = 5
-    while i > 0:
+    i = 0
+    while i < 10:
         cliente.solicitar_arquivo(arquivo_desejado)
-        end_time = time()
-        tempo_execucao = end_time - start_time
-        soma_tempo += tempo_execucao
-        i -= 1
+        i += 1
 
-    print(f"[*] Tempo total para 5 requisições: {soma_tempo:.2f} segundos")
-        
+
