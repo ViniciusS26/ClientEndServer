@@ -1,34 +1,43 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  server:
-    build: ./src
-    container_name: redes_server
-    tty: true
-    stdin_open: true
+  servertcp:
+    build: 
+      context: ./src
+      dockerfile: conexao_TCP/Dockerfile
+    container_name: server_tcp
     volumes:
       - ./src:/app
-      - ./captures:/app/captures
-    cap_add:
-      - NET_ADMIN
+    environment:
+      - PYTHONPATH=/app
+    command: python3 /app/conexao_TCP/new_server.py
     networks:
-      - rede_avaliacao
+      redes:
+        ipv4_address: 95.58.0.3
+    ports:
+      - "8000:80"
+
 
   client:
-    build: ./src
-    container_name: redes_client
-    tty: true
-    stdin_open: true
-    volumes:
-      - ./src:/app
-      - ./captures:/app/captures
-    cap_add:
-      - NET_ADMIN
+    build:
+      context: ./src
+      dockerfile: conexao_TCP/Dockerfile
+    container_name: client
     depends_on:
-      - server
+      - servertcp
+    volumes:
+      - ./capturas:/capturas
+      - ./src:/app
+    environment:
+      - PYTHONPATH=/app
+    command: python3 /app/conexao_TCP/new_client.py
     networks:
-      - rede_avaliacao
+      redes:
+        ipv4_address: 95.58.0.4
 
 networks:
-  rede_avaliacao:
+  redes:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 95.58.0.0/24
