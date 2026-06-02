@@ -74,7 +74,7 @@ class ServidorTCP:
 
         if tempo_execucao > 0:
             taxa_transferencia = total_byte_enviado / tempo_execucao
-
+        
         return {
             "tempo_execucao": tempo_execucao, 
             "bytes_enviados": total_byte_enviado, 

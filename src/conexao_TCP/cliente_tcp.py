@@ -76,9 +76,7 @@ class ClientTCP:
 if __name__ == "__main__":
     cliente = ClientTCP(target_host, target_port)
     arquivo_desejado = "arquivo.txt"
-    i = 0
-    while i < 10:
-        cliente.solicitar_arquivo(arquivo_desejado)
-        i += 1
+    cliente.solicitar_arquivo(arquivo_desejado)
+
 
 
